@@ -15,7 +15,7 @@ the tcp mystery machine.
 
 ## Server coordinates
 
-- Host: `$VOYAGER_HOST` (fallback `voyager.example.com`).
+- Host: `$VOYAGER_HOST` (fallback `voyager1.v9n.us`).
 - Port: `4242`.
 - Protocol: plaintext TCP, CRLF line endings.
 - Connect-time banner: `VGR1 FDS READY`, followed by prompt `> `.
