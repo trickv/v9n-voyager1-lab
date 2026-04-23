@@ -69,6 +69,7 @@ def _cmd_status(args: list[str]):
         return [ERR_SYNTAX]
     now = telemetry.now_utc()
     elapsed = telemetry.format_elapsed(telemetry.mission_elapsed(now))
+    uptime = telemetry.format_elapsed(telemetry.fds_uptime(now))
     au = telemetry.distance_au(now)
     km = telemetry.distance_km(now)
     owlt = telemetry.format_hms(telemetry.one_way_light_time(now))
@@ -83,7 +84,7 @@ def _cmd_status(args: list[str]):
         f"RTG      {rtg:.1f} W (APPROX)",
         f"INST     {active}/{total} ACTIVE",
         f"DSN      {station} {dss}",
-        f"UPTIME   {elapsed}",
+        f"UPTIME   {uptime} (SINCE FDS REBOOT 2024-06-13)",
     ]
 
 
@@ -151,12 +152,15 @@ def _cmd_fds(args: list[str]):
             "NOTE     APPROX MAP; NARRATIVE ACCURATE",
         ]
     if sub == "STATUS" and len(args) == 1:
+        now = telemetry.now_utc()
+        uptime = telemetry.format_elapsed(telemetry.fds_uptime(now))
         return [
             "FDS STATUS",
             "STATE    NOMINAL (POST-RECOVERY)",
             "REDUN    2 UNITS 16-BIT CMOS",
             "LAST ERR 2023-11-14 MEMORY CHIP FAULT",
             "RECOVER  2024-06-13 FULL SCIENCE DATA",
+            f"UPTIME   {uptime} SINCE 2024-06-13",
             "NOTE     APPROX",
         ]
     return [ERR_SYNTAX]

@@ -36,15 +36,16 @@ DIST     170.22 AU   2.546E+10 KM   ~23:35:39 OWLT
 RTG      248.7 W (APPROX)
 INST     2/9 ACTIVE
 DSN      CANBERRA DSS-43
-UPTIME   48Y 08M 01D
+UPTIME   01Y 10M 10D (SINCE FDS REBOOT 2024-06-13)
 .
 ```
 
-- `MET` — mission elapsed time since 1977-09-05 launch.
+- `MET` — Mission Elapsed Time since 1977-09-05 launch. Mission-wide counter; ticks whether the spacecraft is on, off, rebooted, or safed.
 - `DIST` — distance from Earth, AU + km + one-way light time.
 - `RTG` — radioisotope thermoelectric generator output (APPROX).
 - `INST` — count of powered instruments / total.
 - `DSN` — notional tracking complex (rotates Canberra / Madrid / Goldstone by UTC hour).
+- `UPTIME` — time since the Flight Data Subsystem last rebooted. Anchored to 2024-06-13, the end of the 2024 memory-chip recovery. Diverges from MET every reset, safe mode, or computer swap.
 
 ### INST LIST
 

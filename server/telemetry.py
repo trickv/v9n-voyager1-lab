@@ -21,6 +21,11 @@ from datetime import datetime, timedelta, timezone
 
 LAUNCH_EPOCH = datetime(1977, 9, 5, 12, 56, 0, tzinfo=timezone.utc)
 
+# FDS was rebooted into the rerouted code after the 2024 memory-chip recovery.
+# UPTIME on the banner means "time since the FDS last came up with the current
+# image" — which diverges from mission elapsed time every reset.
+FDS_BOOT_EPOCH = datetime(2024, 6, 13, tzinfo=timezone.utc)
+
 DISTANCE_ANCHOR_DATE = datetime(2026, 4, 1, tzinfo=timezone.utc)
 DISTANCE_ANCHOR_AU = 170.0
 DISTANCE_RATE_AU_PER_YEAR = 3.6
@@ -41,6 +46,10 @@ def now_utc() -> datetime:
 
 def mission_elapsed(now: datetime) -> timedelta:
     return now - LAUNCH_EPOCH
+
+
+def fds_uptime(now: datetime) -> timedelta:
+    return now - FDS_BOOT_EPOCH
 
 
 def distance_au(now: datetime) -> float:
