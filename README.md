@@ -16,9 +16,9 @@ echo 'STATUS' | nc -q 1 localhost 4242
 ## Docker
 
 ```sh
-docker compose up -d --build
+docker-compose up -d --build      # or: docker compose up -d --build
 echo 'STATUS' | nc -q 1 localhost 4242
-docker compose down
+docker-compose down
 ```
 
 ## Deploy to VPS

@@ -11,6 +11,12 @@ sudo apt install -y docker.io docker-compose-plugin netcat-openbsd ufw
 sudo usermod -aG docker "$USER"   # log out / back in after this
 ```
 
+On older distros (Debian 9 / Stretch) the `docker-compose-plugin` package
+doesn't exist; use the stand-alone `docker-compose` binary (Python 2.7
+era). The compose file uses the v2 schema for compatibility with
+compose 1.x. On a modern install use `docker compose` (space) in place
+of `docker-compose` (hyphen) below.
+
 ## First-time setup
 
 ```sh
@@ -18,14 +24,14 @@ sudo ufw allow 4242/tcp
 sudo ufw reload
 git clone git@github.com:trickv/tcp-mystery-machine-demo.git
 cd tcp-mystery-machine-demo
-docker compose up -d --build
+docker-compose up -d --build     # or: docker compose up -d --build
 ```
 
 ## Verify from the VPS
 
 ```sh
 echo 'STATUS' | nc -q 1 localhost 4242
-docker compose logs -f --tail=50
+docker-compose logs -f --tail=50
 ```
 
 Expected: banner + STATUS block terminated by `.`, container logs show
@@ -39,19 +45,19 @@ echo 'STATUS' | nc -q 1 <vps-host> 4242
 
 If you get connection refused: check `sudo ufw status`, check
 `ss -ltnp | grep 4242` on the VPS, check the container is running
-(`docker compose ps`).
+(`docker-compose ps`).
 
 ## Update
 
 ```sh
 git pull
-docker compose up -d --build
+docker-compose up -d --build
 ```
 
 ## Stop
 
 ```sh
-docker compose down
+docker-compose down
 ```
 
 ## Logs
@@ -59,8 +65,8 @@ docker compose down
 Already rotated by compose (json-file, 10 MB × 3). To inspect:
 
 ```sh
-docker compose logs --tail=200
-docker compose logs -f
+docker-compose logs --tail=200
+docker-compose logs -f
 ```
 
 ## Troubleshooting
@@ -71,7 +77,7 @@ docker compose logs -f
   sudo ss -ltnp | grep 4242
   ```
 - **UFW blocking**: `sudo ufw status` should show `4242/tcp ALLOW`.
-- **Container restart loop**: `docker compose logs` for the stack trace.
+- **Container restart loop**: `docker-compose logs` for the stack trace.
   Most likely a Python import error from a hand-edit.
 - **Too many reconnects from one student**: the 200-connection cap plus
   120s idle timeout prevents abuse. `?BUSY` is the expected response at
