@@ -4,7 +4,7 @@ Target: the bootcamp VPS is Debian 9 (stretch) with docker 19.03 and
 docker-compose 1.8. The compose file uses the v2 schema so compose 1.8
 understands it. Two ports need to reach the public internet:
 - **4242/tcp** — raw TCP protocol server.
-- **8080/tcp** — HTTP + WebSocket bridge serving the in-browser terminal.
+- **8428/tcp** — HTTP + WebSocket bridge serving the in-browser terminal.
 
 ## Prereqs (Debian 9 / stretch)
 
@@ -21,12 +21,12 @@ cd tcp-mystery-machine-demo
 docker-compose up -d --build
 ```
 
-Open ports 4242 and 8080 in whatever firewall the host uses
+Open ports 4242 and 8428 in whatever firewall the host uses
 (iptables / ufw / cloud SG). Stretch's `ufw` predates the iptables-nft
 transition, so if `ufw` behaves strangely, the direct path is:
 ```sh
 iptables -A INPUT -p tcp --dport 4242 -j ACCEPT
-iptables -A INPUT -p tcp --dport 8080 -j ACCEPT
+iptables -A INPUT -p tcp --dport 8428 -j ACCEPT
 ```
 
 ## Verify from the VPS
@@ -37,7 +37,7 @@ echo 'STATUS' | nc -q 1 localhost 4242
 ```
 Browser bridge:
 ```sh
-curl -sSf http://localhost:8080/ | head -1     # -> <!DOCTYPE html>
+curl -sSf http://localhost:8428/ | head -1     # -> <!DOCTYPE html>
 ```
 Logs:
 ```sh
@@ -45,16 +45,16 @@ docker-compose logs -f --tail=50
 ```
 
 Expected: `voyager` container shows `listening on ('0.0.0.0', 4242)`,
-`voyager-bridge` container shows `listening on 0.0.0.0:8080` and
+`voyager-bridge` container shows `listening on 0.0.0.0:8428` and
 `upstream voyager:4242`.
 
 ## Verify from the outside
 
 ```sh
 echo 'STATUS' | nc -q 1 voyager1.v9n.us 4242
-curl -sSf http://voyager1.v9n.us:8080/ | head -1
+curl -sSf http://voyager1.v9n.us:8428/ | head -1
 ```
-Then open `http://voyager1.v9n.us:8080/` in a browser and type `STATUS`.
+Then open `http://voyager1.v9n.us:8428/` in a browser and type `STATUS`.
 
 If you get connection refused: check the host firewall, check
 `ss -ltnp | grep 4242` on the VPS, check the container is running

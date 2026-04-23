@@ -172,7 +172,7 @@ def main() -> None:
         stream=sys.stdout,
     )
     host = os.environ.get("BRIDGE_HOST_BIND", "0.0.0.0")
-    port = _env_int("BRIDGE_PORT", 8080)
+    port = _env_int("BRIDGE_PORT", 8428)
     tcp_host = os.environ.get("BRIDGE_TCP_HOST", "127.0.0.1")
     tcp_port = _env_int("BRIDGE_TCP_PORT", 4242)
     try:

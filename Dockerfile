@@ -12,7 +12,7 @@ COPY web/ ./web/
 RUN adduser --disabled-password --gecos "" --uid 10001 vgr
 USER vgr
 
-EXPOSE 4242 8080
+EXPOSE 4242 8428
 ENV PYTHONUNBUFFERED=1
 
 # Default CMD runs the TCP server; docker-compose overrides per service.

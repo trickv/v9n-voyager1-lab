@@ -8,7 +8,7 @@ Every wrong guess you type returns `?CMD` or `?SYNTAX`. That is by design.
 
 ## Try it in your browser
 
-Open **<http://voyager1.v9n.us:8080/>** for a terminal emulator that
+Open **<http://voyager1.v9n.us:8428/>** for a terminal emulator that
 talks to the server over a WebSocket bridge. No install, no netcat,
 no firewall arguments. Just type and see what the probe says back.
 
