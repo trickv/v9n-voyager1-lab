@@ -22,15 +22,24 @@ back. Start with `STATUS`.
 
 ## Try it from the command line
 
-If you have `nc` (netcat) handy:
+Open a socket and type commands at the `> ` prompt:
+
+```sh
+telnet voyager1.v9n.us 4242
+# or
+nc voyager1.v9n.us 4242
+```
+
+Type `STATUS` then Enter. Try other things. Type `QUIT` when you're
+done (or Ctrl-] then `quit` to force-close telnet).
+
+Prefer one-shot queries for scripting? That works too:
 
 ```sh
 echo 'STATUS' | nc -q 1 voyager1.v9n.us 4242
 ```
 
-BSD nc (macOS) doesn't have `-q`; use `-w 2` instead. Classic `telnet`
-works for interactive poking too, though Ctrl-] and CRLF will both bite
-you eventually. See
+BSD `nc` (macOS) doesn't have `-q`; use `-w 2` instead. See
 [`skills/voyager-probe/reference/transports.md`](./skills/voyager-probe/reference/transports.md)
 for the right incantation per OS — Linux, macOS, Windows (WSL or
 PowerShell), plus Python and Node fallbacks.
