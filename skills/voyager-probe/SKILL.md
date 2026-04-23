@@ -1,17 +1,17 @@
 ---
 name: voyager-probe
-description: Connect to and query the Voyager 1 TCP emulator (aka TCP Mystery Machine) at VOYAGER_HOST:4242. Use when the user asks to connect to the voyager probe, talk to the voyager server, query the tcp mystery machine, check voyager telemetry, or anything about VGR1 / FDS / DSN / RTG over raw TCP.
+description: Connect to and query the V9N Voyager 1 Emulator at VOYAGER_HOST:4242. Use when the user asks to connect to the V9N Voyager 1 Emulator, the voyager probe, the voyager server, the tcp mystery machine, check voyager telemetry, or anything about VGR1 / FDS / DSN / RTG over raw TCP.
 allowed-tools:
   - Bash
   - Read
 ---
 
-# Voyager Probe (TCP Mystery Machine)
+# V9N Voyager 1 Emulator
 
 A raw TCP, plaintext, line-oriented server emulating the Voyager 1 spacecraft
 computer. There is no `HELP`, no `?`, no menu. This skill is the protocol
-manual. Use it whenever the user wants to talk to VGR1 / the voyager probe /
-the tcp mystery machine.
+manual. Use it whenever the user wants to talk to the V9N Voyager 1 Emulator,
+VGR1, the voyager probe, or the tcp mystery machine.
 
 ## Server coordinates
 
