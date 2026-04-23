@@ -15,8 +15,13 @@ Try in this order; stop at the first one that works.
 
 1. `nc` — most common on Unix-like hosts.
 2. `ncat` (nmap) — fallback if `nc` is absent.
-3. `python3` — fallback for Windows / locked-down shells.
-4. `node` — fallback if Python is absent but Node is present.
+3. `socat` — fallback on servers that ship neither `nc` nor `ncat`.
+4. `python3` — fallback for Windows / locked-down shells.
+5. `node` — fallback if Python is absent but Node is present.
+
+`netcat` (as a command name, as opposed to `nc` the binary) is
+almost always either a symlink to `nc` or the GNU netcat
+implementation; either way the flavor-detect below covers it.
 
 Do **not** use interactive `telnet` from the skill; it's meant for
 humans. Do **not** hold sockets open across Bash calls (each tool
@@ -48,6 +53,16 @@ as a separate invocation — not a persistent socket.
 ```sh
 echo 'STATUS' | ncat --recv-only "${VOYAGER_HOST:-voyager1.v9n.us}" 4242
 ```
+
+## socat fallback
+
+```sh
+echo 'STATUS' | socat - TCP:"${VOYAGER_HOST:-voyager1.v9n.us}":4242,shut-down
+```
+
+`shut-down` half-closes the write side after stdin EOF so the
+server knows no more input is coming; without it socat will hang
+waiting for the server to close first.
 
 ## Python fallback
 
