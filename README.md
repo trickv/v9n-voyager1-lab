@@ -27,20 +27,18 @@ See [DEPLOY.md](./DEPLOY.md).
 
 ## The Claude Code Skill
 
-Install (symlink) so Claude Code can pick it up:
+Install it by asking your Claude Code agent:
 
-```sh
-mkdir -p ~/.claude/skills
-ln -s "$PWD/skills/voyager-probe" ~/.claude/skills/voyager-probe
-```
+> Install this Skill into the project directory: https://github.com/trickv/tcp-mystery-machine-demo/tree/master/skills/voyager-probe
 
-Then in Claude Code:
+Claude Code will fetch the skill files and drop them in your project's
+`.claude/skills/voyager-probe/`. Then prompt it with anything like:
 
-> connect to the voyager probe
-
-or
+> connect to the V9N Voyager 1 Emulator
 
 > what is the voyager telemetry saying
+
+> give me a tour of the voyager probe
 
 The skill lives in [`skills/voyager-probe/`](./skills/voyager-probe/). Its
 command reference is [`reference/commands.md`](./skills/voyager-probe/reference/commands.md),
