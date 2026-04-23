@@ -33,16 +33,9 @@ nc voyager1.v9n.us 4242
 Type `STATUS` then Enter. Try other things. Type `QUIT` when you're
 done (or Ctrl-] then `quit` to force-close telnet).
 
-Prefer one-shot queries for scripting? That works too:
-
-```sh
-echo 'STATUS' | nc -q 1 voyager1.v9n.us 4242
-```
-
-BSD `nc` (macOS) doesn't have `-q`; use `-w 2` instead. See
+Windows or macOS and these don't Just Work? See
 [`skills/voyager-probe/reference/transports.md`](./skills/voyager-probe/reference/transports.md)
-for the right incantation per OS — Linux, macOS, Windows (WSL or
-PowerShell), plus Python and Node fallbacks.
+for per-OS instructions.
 
 You'll get a brief status block. To find out what else to type — the
 whole point is that you can't. The server won't tell you.

@@ -1,172 +1,55 @@
 # Transports
 
-How to talk to `voyager1.v9n.us:4242` from your own machine. Pick the
-section that matches your OS.
-
-Both styles work:
-
-- **Interactive** — open a socket with `telnet` or `nc`, type commands
-  at the `> ` prompt, type `QUIT` or close when done. Nice for
-  exploration.
-- **One-shot** — `echo 'CMD' | nc …` per command. Nice for scripts.
-
-The examples below show one-shot queries because they're
-copy-pasteable; see the "Interactive poking" section further down for
-the socket-open-and-type-commands style.
+How to talk to `voyager1.v9n.us:4242` from your own machine. Pick
+the section that matches your OS. Open a socket, type commands at
+the `> ` prompt, type `QUIT` when done.
 
 ---
 
 ## Linux
 
-Most distros ship OpenBSD `nc` (the `netcat-openbsd` package):
-
 ```sh
-echo 'STATUS' | nc -q 1 voyager1.v9n.us 4242
+telnet voyager1.v9n.us 4242
+# or
+nc voyager1.v9n.us 4242
 ```
 
-The `-q 1` tells `nc` to exit one second after stdin closes; without
-it, `nc` hangs waiting for the server to close the connection.
-
-If `nc` isn't installed, `ncat` (part of `nmap`) works too:
+Most distros ship OpenBSD `nc` (the `netcat-openbsd` package). If
+neither is installed, `ncat` (part of `nmap`) works:
 
 ```sh
-echo 'STATUS' | ncat --recv-only voyager1.v9n.us 4242
+ncat voyager1.v9n.us 4242
 ```
 
 ---
 
 ## macOS
 
-macOS ships BSD `nc`, which does **not** have `-q`. Use `-w 2`
-instead (exit after 2 seconds of idle):
-
 ```sh
-echo 'STATUS' | nc -w 2 voyager1.v9n.us 4242
+telnet voyager1.v9n.us 4242
+# or
+nc voyager1.v9n.us 4242
 ```
 
-If you don't know which `nc` you have, this detects and runs the
-right one:
-
-```sh
-if nc -h 2>&1 | grep -q -- '-q'; then
-  NC_ARGS="-q 1"          # OpenBSD (most Linux)
-else
-  NC_ARGS="-w 2"          # BSD (macOS)
-fi
-echo 'STATUS' | nc $NC_ARGS voyager1.v9n.us 4242
-```
+macOS ships BSD `nc`. It works the same way interactively.
 
 ---
 
 ## Windows
 
-Three options, easiest first.
+Honestly, **just use the web terminal at
+<https://voyager1.v9n.us/>**. It's identical in every way that
+matters and it works in any browser. Windows doesn't ship `nc` or a
+usable `telnet` and the alternatives involve enough PowerShell that
+they're not worth it for a poking session.
 
-### Option 1 — WSL
-
-If you have WSL installed, use the Linux `nc` inside it:
-
-```sh
-wsl -- bash -c "echo STATUS | nc -q 1 voyager1.v9n.us 4242"
-```
-
-### Option 2 — PowerShell
-
-Stock Win10/Win11, no install. `nc` isn't on Windows, but .NET has a
-TCP client:
-
-```powershell
-$client = New-Object System.Net.Sockets.TcpClient("voyager1.v9n.us", 4242)
-$client.ReceiveTimeout = 3000
-$stream = $client.GetStream()
-$cmd = [System.Text.Encoding]::ASCII.GetBytes("STATUS`r`n")
-$stream.Write($cmd, 0, $cmd.Length)
-$buf = New-Object System.IO.MemoryStream
-$chunk = New-Object byte[] 4096
-try {
-  while ($true) {
-    $n = $stream.Read($chunk, 0, $chunk.Length)
-    if ($n -le 0) { break }
-    $buf.Write($chunk, 0, $n)
-    $text = [System.Text.Encoding]::ASCII.GetString($buf.ToArray())
-    if ($text -match "`n\.`r?`n") { break }
-  }
-} catch [System.IO.IOException] { }
-$client.Close()
-[System.Text.Encoding]::ASCII.GetString($buf.ToArray())
-```
-
-Swap `"STATUS"` for any other command. `$host` is a reserved
-PowerShell variable — don't use it.
-
-### Option 3 — Don't use `telnet.exe`
-
-It's disabled by default on modern Windows, can't reliably emit CRLF,
-and can't detect the server's `.` end-of-reply. Use WSL or PowerShell.
-
----
-
-## Interactive poking: `telnet`
-
-Any OS, if `telnet` is installed:
+If you really want a local client: install
+[WSL](https://learn.microsoft.com/en-us/windows/wsl/install) and
+use the Linux tools inside it:
 
 ```sh
+wsl
 telnet voyager1.v9n.us 4242
-```
-
-Type commands and press Enter. `QUIT` to exit cleanly, or Ctrl-] then
-`quit` to force-close.
-
----
-
-## Programmatic fallbacks
-
-If nothing above works, these run anywhere the respective runtime is
-installed.
-
-### Python
-
-```sh
-python3 -c '
-import socket, sys, os
-host = os.environ.get("VOYAGER_HOST", "voyager1.v9n.us")
-s = socket.create_connection((host, 4242), timeout=5)
-s.sendall(b"STATUS\r\n")
-buf = b""
-s.settimeout(3)
-try:
-    while True:
-        chunk = s.recv(4096)
-        if not chunk:
-            break
-        buf += chunk
-        if b"\n.\r\n" in buf or b"\n.\n" in buf:
-            break
-except socket.timeout:
-    pass
-s.close()
-sys.stdout.write(buf.decode("ascii", errors="replace"))
-'
-```
-
-For multiple commands in one connection, separate with `\r\n`.
-
-### Node
-
-```sh
-node -e '
-const net = require("net");
-const host = process.env.VOYAGER_HOST || "voyager1.v9n.us";
-const s = net.connect(4242, host);
-let buf = "";
-s.on("connect", () => s.write("STATUS\r\n"));
-s.on("data", d => {
-  buf += d;
-  if (/\n\.\r?\n/.test(buf)) { process.stdout.write(buf); s.end(); }
-});
-s.setTimeout(5000, () => { process.stdout.write(buf); s.destroy(); });
-s.on("close", () => {});
-'
 ```
 
 ---
@@ -185,8 +68,52 @@ s.on("close", () => {});
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| `nc` hangs indefinitely | OpenBSD nc without `-q 1` | add `-q 1` |
-| `nc: invalid option -- 'q'` | BSD/macOS nc | use `-w 2` instead |
 | Connection refused | server down, wrong port, firewall | check host / port 4242 |
+| Connection hangs with no banner | network firewall blocking TCP out | try from a different network |
 | `?BUSY` received | server at 200-connection cap | retry later |
-| Empty output on a one-shot | peer closed before reply | very unlikely in practice |
+| `?TIMEOUT` and disconnect | you idled for 120s | reconnect |
+
+---
+
+## Last resort: programmatic fallbacks
+
+If `telnet`, `nc`, and PowerShell all fail you and you still have
+Python or Node on the box, these send one command and print the
+response:
+
+### Python
+
+```sh
+python3 -c '
+import socket, sys
+s = socket.create_connection(("voyager1.v9n.us", 4242), timeout=5)
+s.sendall(b"STATUS\r\n")
+s.settimeout(3)
+buf = b""
+try:
+    while True:
+        chunk = s.recv(4096)
+        if not chunk: break
+        buf += chunk
+        if b"\n.\r\n" in buf or b"\n.\n" in buf: break
+except socket.timeout: pass
+s.close()
+sys.stdout.write(buf.decode("ascii", errors="replace"))
+'
+```
+
+### Node
+
+```sh
+node -e '
+const net = require("net");
+const s = net.connect(4242, "voyager1.v9n.us");
+let buf = "";
+s.on("connect", () => s.write("STATUS\r\n"));
+s.on("data", d => {
+  buf += d;
+  if (/\n\.\r?\n/.test(buf)) { process.stdout.write(buf); s.end(); }
+});
+s.setTimeout(5000, () => { process.stdout.write(buf); s.destroy(); });
+'
+```
