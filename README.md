@@ -30,7 +30,10 @@ echo 'STATUS' | nc -q 1 voyager1.v9n.us 4242
 
 BSD nc (macOS) doesn't have `-q`; use `-w 2` instead. Classic `telnet`
 works for interactive poking too, though Ctrl-] and CRLF will both bite
-you eventually.
+you eventually. See
+[`skills/voyager-probe/reference/transports.md`](./skills/voyager-probe/reference/transports.md)
+for the right incantation per OS — Linux, macOS, Windows (WSL or
+PowerShell), plus Python and Node fallbacks.
 
 You'll get a brief status block. To find out what else to type — the
 whole point is that you can't. The server won't tell you.
