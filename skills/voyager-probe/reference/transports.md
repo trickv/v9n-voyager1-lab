@@ -14,12 +14,15 @@ telnet voyager1.v9n.us 4242
 nc voyager1.v9n.us 4242
 ```
 
-Most distros ship OpenBSD `nc` (the `netcat-openbsd` package). If
-neither is installed, `ncat` (part of `nmap`) works:
+If neither is installed, grab them on Debian / Ubuntu / WSL:
 
 ```sh
-ncat voyager1.v9n.us 4242
+sudo apt install -y telnet netcat-openbsd
 ```
+
+On Fedora / RHEL: `sudo dnf install telnet nmap-ncat` (then use
+`ncat` in place of `nc`). On Arch: `sudo pacman -S inetutils
+openbsd-netcat`.
 
 ---
 
