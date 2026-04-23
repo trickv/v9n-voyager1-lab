@@ -81,6 +81,55 @@ s.on("close", () => {});
 '
 ```
 
+## Windows
+
+**Prefer WSL if available** — it gives the student a real `nc` and matches
+every other example in this file:
+
+```sh
+wsl -- bash -c "echo STATUS | nc -q 1 \$VOYAGER_HOST 4242"
+```
+
+**PowerShell (stock Win10/11, no install):** use `System.Net.Sockets.TcpClient`.
+
+```powershell
+$host_ = if ($env:VOYAGER_HOST) { $env:VOYAGER_HOST } else { "voyager1.v9n.us" }
+$client = [System.Net.Sockets.TcpClient]::new($host_, 4242)
+$client.ReceiveTimeout = 3000
+$stream = $client.GetStream()
+$writer = [System.IO.StreamWriter]::new($stream); $writer.NewLine = "`r`n"; $writer.AutoFlush = $true
+$reader = [System.IO.StreamReader]::new($stream)
+$writer.WriteLine("STATUS")
+$buf = ""
+try {
+  while ($true) {
+    $line = $reader.ReadLine()
+    if ($null -eq $line) { break }
+    $buf += "$line`n"
+    if ($line -eq ".") { break }
+  }
+} catch { }
+$client.Close()
+Write-Output $buf
+```
+
+Gotchas:
+- `$host` is a reserved PowerShell variable — use `$host_` or similar.
+- Backtick-r backtick-n (`` `r`n ``) is PowerShell's CRLF escape.
+- `ReadLine` blocks; `ReceiveTimeout` makes it throw after 3s of silence so
+  single-line replies (`?CMD`, `?SYNTAX`) don't hang.
+
+**cmd.exe:** no native TCP client. Don't use classic `telnet.exe` — it's
+disabled by default, can't reliably send CRLF, and has no way to detect the
+`.` terminator. If stuck on cmd, invoke PowerShell:
+
+```cmd
+powershell -NoProfile -Command "..."
+```
+
+**Git Bash:** does not ship `nc`. Use the PowerShell approach above, or
+install Python and use the Python one-liner from section 3.
+
 ## Parsing hints
 
 - Server banner arrives before your command is echoed as part of the reply. Typical first output: `VGR1 FDS READY\r\n> ` then your reply.

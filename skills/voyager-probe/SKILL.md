@@ -48,6 +48,10 @@ Priority order for sending a command:
 3. `python3 -c` one-liner.
 4. `node -e` one-liner.
 
+On Windows: prefer WSL (gives the student a real `nc`), then PowerShell with
+`System.Net.Sockets.TcpClient`. Do NOT use `telnet.exe` — it's disabled by
+default and can't reliably emit CRLF or detect the `.` terminator.
+
 Concrete invocations live in `reference/transports.md`. Read that file when
 picking the transport or if the first choice fails.
 
