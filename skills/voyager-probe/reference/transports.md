@@ -1,11 +1,18 @@
 # Transports
 
 How to talk to `voyager1.v9n.us:4242` from your own machine. Pick the
-section that matches your OS. Always use one-shot queries — don't hold
-a socket open across commands.
+section that matches your OS.
 
-If `VOYAGER_HOST` is set in your environment the examples use it;
-otherwise they fall back to `voyager1.v9n.us`.
+Both styles work:
+
+- **Interactive** — open a socket with `telnet` or `nc`, type commands
+  at the `> ` prompt, type `QUIT` or close when done. Nice for
+  exploration.
+- **One-shot** — `echo 'CMD' | nc …` per command. Nice for scripts.
+
+The examples below show one-shot queries because they're
+copy-pasteable; see the "Interactive poking" section further down for
+the socket-open-and-type-commands style.
 
 ---
 
