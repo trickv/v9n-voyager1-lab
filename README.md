@@ -84,13 +84,19 @@ and drives it for you.
 
    If `voyager-probe` doesn't show up, run `/reload-plugins`.
 
-3. Use it:
+3. Use it. Try any of these in Claude Code:
 
-   > connect to the V9N Voyager 1 Emulator
+   ```
+   connect to the V9N Voyager 1 Emulator
+   ```
 
-   > what is the voyager telemetry saying
+   ```
+   what is the voyager telemetry saying
+   ```
 
-   > give me a tour of the voyager probe
+   ```
+   give me a tour of the voyager probe
+   ```
 
 The skill always echoes the exact shell command it used — so you
 still learn the protocol while it drives.
